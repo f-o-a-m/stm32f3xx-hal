@@ -21,12 +21,12 @@ exclude = [
 resolver = "2"
 rust-version = "1.54"
 
-[workspace]
-members = [
-    ".",
-    "testsuite",
-    "codegen"
-]
+#[workspace]
+#members = [
+#    ".",
+#    "testsuite",
+#    "codegen"
+#]
 
 [package.metadata.docs.rs]
 features = ["stm32f303xc", "rt", "usb", "can", "enumset"]
