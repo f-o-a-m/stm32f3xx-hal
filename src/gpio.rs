@@ -61,9 +61,10 @@
 //! [examples/toggle.rs]: https://github.com/stm32-rs/stm32f3xx-hal/blob/v0.9.1/examples/toggle.rs
 
 use core::{convert::Infallible, marker::PhantomData};
+use embedded_hal::digital::v2::PinState;
 
 use crate::{
-    hal::digital::v2::OutputPin,
+    hal::digital::v2::{IoPin, OutputPin},
     pac::{Interrupt, EXTI},
     rcc::AHB,
     Toggle,
@@ -550,6 +551,50 @@ where
     Gpio: marker::Gpio,
     Index: marker::Index,
 {
+}
+
+impl<Gpio, Index, Otype> IoPin<Pin<Gpio, Index, Input>, Pin<Gpio, Index, Output<Otype>>>
+    for Pin<Gpio, Index, Input>
+where
+    Gpio: marker::Gpio,
+    Index: marker::Index,
+{
+    type Error = Infallible;
+
+    fn into_input_pin(self) -> Result<Pin<Gpio, Index, Input>, Self::Error> {
+        Ok(self)
+    }
+
+    fn into_output_pin(
+        self,
+        state: PinState,
+    ) -> Result<Pin<Gpio, Index, Output<Otype>>, Self::Error> {
+        let mut o = self.into_mode();
+        o.set_state(state)?;
+        Ok(o)
+    }
+}
+
+impl<Gpio, Index, Otype> IoPin<Pin<Gpio, Index, Input>, Pin<Gpio, Index, Output<Otype>>>
+    for Pin<Gpio, Index, Output<Otype>>
+where
+    Gpio: marker::Gpio,
+    Index: marker::Index,
+{
+    type Error = Infallible;
+
+    fn into_input_pin(self) -> Result<Pin<Gpio, Index, Input>, Self::Error> {
+        Ok(self.into_mode())
+    }
+
+    fn into_output_pin(
+        self,
+        state: PinState,
+    ) -> Result<Pin<Gpio, Index, Output<Otype>>, Self::Error> {
+        let mut o = self.into_mode();
+        o.set_state(state)?;
+        Ok(o)
+    }
 }
 
 /// Return an EXTI register for the current CPU
