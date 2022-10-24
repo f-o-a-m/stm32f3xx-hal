@@ -139,6 +139,18 @@ impl<B, C: Channel, T: Target> Transfer<B, C, T> {
         inner.channel.is_event_triggered(Event::TransferComplete)
     }
 
+    /// Is this transfer errored?
+    pub fn is_error(&self) -> bool {
+        let inner = crate::unwrap!(self.inner.as_ref());
+        inner.channel.is_event_triggered(Event::TransferError)
+    }
+
+    /// Is this transfer errored?
+    pub fn clear_events(&mut self) {
+        let inner = crate::unwrap!(self.inner.as_mut());
+        inner.channel.clear_event(Event::Any);
+    }
+
     /// Stop this transfer and return ownership over its parts
     pub fn stop(mut self) -> (B, C, T) {
         let mut inner = crate::unwrap!(self.inner.take());
