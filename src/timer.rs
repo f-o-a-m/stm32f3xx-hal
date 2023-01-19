@@ -260,6 +260,11 @@ where
         self.stop();
         self.tim
     }
+
+    /// Gets the value of the timer's counter register
+    pub fn count(&self) -> u32 {
+        self.tim.get_cnt()
+    }
 }
 
 impl<TIM> Periodic for Timer<TIM> where TIM: Instance {}
@@ -364,6 +369,8 @@ pub trait CommonRegisterBlock: crate::private::Sealed {
     fn set_psc(&mut self, psc: u16);
     #[doc(hidden)]
     fn set_arr(&mut self, arr: u16);
+    #[doc(hidden)]
+    fn get_cnt(&self) -> u32;
 }
 
 /// Associated clocks with timers
@@ -434,6 +441,11 @@ macro_rules! timer {
                 // TODO (sh3rm4n)
                 // self.tim.arr.write(|w| { w.arr().bits(arr) });
                 self.arr.write(|w| unsafe { w.bits(u32::from(arr)) });
+            }
+
+            #[inline]
+            fn get_cnt(&self) -> u32 {
+                self.cnt.read().bits()
             }
         }
     };
