@@ -146,6 +146,8 @@ defmt-info = ["defmt"]
 defmt-warn = ["defmt"]
 defmt-error = ["defmt"]
 
+__disabled = []
+
 # cargo build/run
 [profile.dev]
 debug = 2

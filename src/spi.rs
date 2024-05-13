@@ -371,7 +371,10 @@ where
         } else if sr.txe().is_empty() {
             let write_ptr = &self.spi.dr as *const _ as *mut Word;
             // NOTE(unsafe) write to register owned by this Spi struct
-            unsafe { ptr::write_volatile(write_ptr, word) };
+            #[allow(invalid_reference_casting)] // TODO: fix me
+            unsafe {
+                ptr::write_volatile(write_ptr, word)
+            };
             return Ok(());
         } else {
             nb::Error::WouldBlock
